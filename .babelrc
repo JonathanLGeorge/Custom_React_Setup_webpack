@@ -1,0 +1,5 @@
+{
+  "presets": ["@babel/preset-env", "@babel/preset-react"]
+}
+//"@babel/preset-env handels transformation of ES6
+//@babel/preset-react for handeling our JSX
