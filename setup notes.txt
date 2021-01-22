@@ -1,3 +1,6 @@
+Use this as a guide to set up from scratch or just use npm insall if you cloned this repo
+
+
 run the following at set up 
 npm i --save-dev @babel/core @babel/cli @babel/preset-env @babel/preset-react
 
