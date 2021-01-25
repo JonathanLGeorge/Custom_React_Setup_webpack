@@ -27,3 +27,82 @@ This is a unidirectional data flow
         ⮣ 🠢 🠢 --UI triggers action  ⮧
         🠡                             ⭣
 Components see updated state 🠠 🠠State is updated 
+
+
+
+after we create reducer.js and actions.js
+import the reducer we created to the store.js and add it to the reducer object. 
+
+so far we have defined some of the possible actions that could happen in our app 
+and the effects on effects they should have on the state of our app when triggered
+
+now we need to give these components in our app access to the redux store
+so they can see what the current state is, as well as trigger actions that modifiy the state
+
+so we connect these components to the redux store 
+
+look at ./src/todos/NewTodoForm.js
+we import {connect} from 'react-redux'
+
+connect is a higher order function (its called with 2 different sets of arguments) example: connect()()
+
+we will create the following 
+const mapStateToProps = (state) => ({
+  todos: state.todos,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onCreatePressed: (text) => dispatch(createTodo(text)),
+});
+
+and then import:
+import { connect } from "react-redux";
+import { createTodo } from "./actions";
+
+and we can create some behaviors on our button
+<button
+    onClick={() => {
+        const isDuplicateText = todos.some(
+            (todo) => todo.text === inputValue);
+        if (!isDuplicateText) {
+            onCreatePressed(inputValue);
+            setInputValue("");
+        }
+    }}
+    className="new-todo-button"
+    >
+        Create Todo
+</button>
+ 
+
+
+now we need to update our todolist.js component
+import { connect } from "react-redux";
+
+update our export:
+export default connect(mapStateToProps, mapDispatchToProps)(TodoList);
+
+create our maps:
+const mapStateToProps = (state) => ({
+  todos: state.todos,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onRemovePressed: (text) => dispatch(removeTodo(text)),
+});
+
+dont forget to 
+import { removeTodo } from "./actions";
+
+
+now our todoList.js is connected to the redux store
+
+its important to know that we dont always use a mapStateToProps or mapDispatchToProps
+many instances will occure when we really only need one of these. if so we only define the one we need and connect with it
+
+this would look lke this 
+//if we only need mapStateToProps
+export default connect(mapStateToProps)(TodoList);
+or this
+//if we only need mapDispatchToProps
+export default connect(null, mapDispatchToProps)(TodoList);
