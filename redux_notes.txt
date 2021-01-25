@@ -1,0 +1,29 @@
+Redux store: Json/ central state
+
+Redux action: 
+    These are Joson objects that consit of two things.
+    action type which is just a string naming the action
+    and payload of additional data
+    {type, payload}
+    its purpose is to explicitly define the different events that can occure in our app.
+
+    example:
+        Redux action type USER_DATA_LOADED with payload of user data we fetch from a server
+        Redux action type ITEM_ADDED_TO_CART payload with ites ids user added to chart
+
+    we can have many of these action.. the point is we explicitly define them so you can controll them 
+
+
+
+Reducers: specifies what should happen to our Redux store when an action is triggered
+
+USER_DATA_LOADED -> REDUCERS -> user: { ... }
+ITEM_ADDED_TO_CART -> REDUCERS -> shoppingcart: [ ... ]
+
+
+Components can only interact with the state by triggeresing Redux actions
+This is a unidirectional data flow
+
+        ⮣ 🠢 🠢 --UI triggers action  ⮧
+        🠡                             ⭣
+Components see updated state 🠠 🠠State is updated 
