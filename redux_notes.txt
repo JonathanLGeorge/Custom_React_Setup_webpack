@@ -106,3 +106,68 @@ export default connect(mapStateToProps)(TodoList);
 or this
 //if we only need mapDispatchToProps
 export default connect(null, mapDispatchToProps)(TodoList);
+
+
+look at our files for context clues on how this program was made...
+at this stage we should have a fuctional app
+but we will notice that once we refresh the page, our list is refreshed and gone
+
+lets install redux-persist 
+
+we will need to make some changes to store.js and index.js
+
+///////////////////
+deleting the persist
+//////////////////
+adding this might cause a perma crash durring development..
+we need to delete the persited data from local storge or whereever you are storing it 
+in our browser... open up inspect -> application tab -> storage/localstorage/localhost
+you should hopfully see persist:root....clear or delete that
+refresh the app... you should see we have a fresh state. :D
+
+
+
+
+////////////////
+chrome extention
+/////////////////
+
+
+adding redux-dev tools in chrome
+in store.js add:
+window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+
+inside:
+export const configureStore = () =>
+  createStore(
+    persistedReducer,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  );
+
+
+
+
+
+
+
+  //////////////
+  best practices 
+  //////////////
+
+  When we connect components to the redux store, make sure our files 
+  Export both the connected and unconnected versions of a component 
+
+  the reason for this is that the connectde version of our component is usually what the rest of our app will wnt to use
+   but when testing our components, it will make our life easy to test the component as is 
+   our tests shouldnt care whether our components are connecte or not 
+   we should simple see if the components render the correct JS given the specific set of props
+
+   We should never trigger any other actions from side our reducers or perform any async operations like fetching data from a network 
+   Keep Redux actions and async operations OUT OF YOUR REDUCERS!!!!
+    Remember that reducers are specifically ment to to take the curent state of the redux store and combind it with an action to 
+    get the updated state. thats it
+
+    Think carefully about connecting components
+    connecting a component to the redux store, in practice, makes it less reusable
+
+   

@@ -1,4 +1,9 @@
-import { CREATE_TODO, REMOVE_TODO } from "./actions";
+import {
+  CREATE_TODO,
+  REMOVE_TODO,
+  MARK_TODO_AS_COMPLETED,
+  markTodoAsCompleted,
+} from "./actions";
 
 //reducers take 2 arguments
 export const todos = (state = [], action) => {
@@ -20,6 +25,16 @@ export const todos = (state = [], action) => {
       //look at actions.js
       const { text } = payload;
       return state.filter((todo) => todo.text !== text);
+    }
+    case MARK_TODO_AS_COMPLETED: {
+      const { text } = payload;
+      return state.map((todo) => {
+        if (todo.text === text) {
+          //todo.tex === to the payload text
+          return { ...todo, isCompleted: true };
+        }
+        return todo;
+      });
     }
     default:
       return state; //we need this because this will get called when any action gets triggerd so we need a default
