@@ -1,2 +1,79 @@
 in redux a think is simply a function that returns another function
  which contains the actuall logic that we want to perform when its true
+
+
+ when dealing with asynch code 
+ we know that waiting for things to return from another server takes time 
+ so we need to shoe some sort of loading message while we are waiting for things to load
+ So.... we are gonig to need something in our redux store that will tell us when our todos are loaded/ing
+
+ lets add some reducers
+
+ export const isLoading = (state = false, action) => {
+    const { type } = action;
+
+    switch (type) {
+    case LOAD_TODOS_IN_PROGRESS:
+        return true;
+    case LOAD_TODOS_SUCCESS:
+    case LOAD_TODOS_FAILURE:
+        return false;
+    default:
+        return state;
+    }
+}
+update todisList
+
+//////////////////////////
+we can use postman to do some cool requests with our server
+
+under body
+{"text": "im a postman test"}
+
+we will see 
+{
+    "id": "jfdisoasdifuidoasdf=fdsads=fasd===fdass",
+    "createdAt": 1234568753123,
+    "isCompleted": false,
+    "text": "im a postman test"
+}
+
+
+lets create a way to save updated inputs... curently everything is only saved in front end memory
+
+in thunks.js add: 
+export const addTodoRequest = text => async dispatch => {
+    try {
+        const body = JSON.stringify({ text });
+        const response = await fetch('http://localhost:8080/todos', {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            method: 'post',
+            body,
+        });
+        const todo = await response.json();
+        dispatch(createTodo(todo));
+    } catch (e) {
+        dispatch(displayAlert(e));
+    }
+}
+then go to actions.js and pdat/chane
+
+export const CREATE_TODO = 'CREATE_TODO';
+export const createTodo = todo => ({
+    type: CREATE_TODO,
+    payload: { todo },
+});
+
+
+update reducers.js
+and NewtodoOForm
+
+
+we will have the ability to add and load things to our server
+now we need to be able to delete stuff
+and a way to update server resources
+
+
+

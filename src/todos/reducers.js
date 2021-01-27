@@ -2,9 +2,26 @@ import {
   CREATE_TODO,
   REMOVE_TODO,
   MARK_TODO_AS_COMPLETED,
-  markTodoAsCompleted,
+  LOAD_TODOS_IN_PROGRESS,
+  LOAD_TODOS_SUCCESS,
+  LOAD_TODOS_FAILURE,
 } from "./actions";
 
+//async stuff is happening with these
+export const isLoading = (state = false, action) => {
+  const { type } = action;
+
+  switch (type) {
+    case LOAD_TODOS_IN_PROGRESS: //just stated loading
+      return true; //the loading is still going
+    case LOAD_TODOS_SUCCESS:
+    case LOAD_TODOS_FAILURE:
+      return false; // the loading has ended
+    default:
+      return state; //current state before the action was recived
+  }
+  //make sure to go into store.js and make your updates to imported todos/reducers
+};
 //reducers take 2 arguments
 export const todos = (state = [], action) => {
   //action has type and payload.
@@ -13,13 +30,18 @@ export const todos = (state = [], action) => {
   switch (type) {
     case CREATE_TODO: {
       //look at actions.js
-      const { text } = payload; //you can see we defined this in actions.js || payload:{text}
+      ////const { text } = payload; //you can see we defined this in actions.js || payload:{text}
+      //replaced by
+      const { todo } = payload;
       //create new todo item
+      /* changed the code to only use the return  that will simply return this todo concatinated to the current state
       const newTodo = {
         text, //text we got from payload
         isCompleted: false, // this is a check property
       };
-      return state.concat(newTodo); //return current state with newTodo concat.  concat will not mutate the state. its very important we dont mutate the state in any way here
+      */
+      //return state.concat(newTodo); //return current state with newTodo concat.  concat will not mutate the state. its very important we dont mutate the state in any way here
+      return state.concat(todo);
     }
     case REMOVE_TODO: {
       //look at actions.js
@@ -36,6 +58,13 @@ export const todos = (state = [], action) => {
         return todo;
       });
     }
+    case LOAD_TODOS_SUCCESS: {
+      //taking care of our async stuff
+      const { todos } = payload;
+      return todos;
+    }
+    case LOAD_TODOS_IN_PROGRESS:
+    case LOAD_TODOS_FAILURE:
     default:
       return state; //we need this because this will get called when any action gets triggerd so we need a default
   }

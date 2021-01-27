@@ -6,10 +6,10 @@ import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 //
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
-import { todos } from "./todos/reducers";
+import { todos, isLoading } from "./todos/reducers";
 
 //this is where we put all our reducers we define
-const reducers = { todos }; //hooking up our reducer to our redux store
+const reducers = { todos, isLoading }; //hooking up our reducer to our redux store
 
 //how to save and where to store our aplications data
 const persistConfig = {
