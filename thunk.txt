@@ -1,0 +1,2 @@
+in redux a think is simply a function that returns another function
+ which contains the actuall logic that we want to perform when its true

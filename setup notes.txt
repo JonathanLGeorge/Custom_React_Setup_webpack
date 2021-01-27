@@ -35,3 +35,48 @@ because the dev inviorment doesnt build the project files its all stored im memo
 
 time to build the file 
 npm run build
+
+
+
+
+
+
+
+
+
+
+
+
+after you build out some of the app consider:
+npm i redux-thunk redux-devtools-extension @babel/runtime
+
+this will allow us to start using async and more complex code outside our components
+
+then 
+npm i --save-dev  @babel/plugin-transform-runtime
+
+this is development package of babel runtime
+
+now we need to update our .babelrc file 
+
+{
+    "presets": ["@babel/preset-env", "@babel/preset-react"],
+    "plugins": ["@babel/plugin-transform-runtime"]
+}
+
+and add some things to our store.js file
+import thunk from 'redux-thunk';
+import { composeWithDevTools } from 'redux-devtools-extension';
+
+change:
+export const configureStore = () =>
+    createStore(
+        persistedReducer,
+        composeWithDevTools(
+            applyMiddleware(thunk)
+        )
+    );
+
+
+    now its time to add some thunks
+    view thunk notes

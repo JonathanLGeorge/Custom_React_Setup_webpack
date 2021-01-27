@@ -13,14 +13,13 @@ import App from "./App.js";
 const store = configureStore();
 const persistor = persistStore(store);
 
-/*
 ReactDOM.render(
   <Provider store={configureStore()}>
     <App />
   </Provider>,
   document.getElementById("root")
 ); //root is defined in public/index.html
-*/
+
 ReactDOM.render(
   <Provider store={store}>
     <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
