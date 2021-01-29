@@ -1,0 +1,128 @@
+offten times we want to pass our components data that requires a bit of computation to obtain 
+example... we have seperate todo lists for the todos that are completed and todos that are incomplete...
+this would require either our components or our mapSateToProps to include filtering logic 
+neither is ideal because it adds unessesary complexity to our component files
+
+
+this is why selectors exist!!!
+
+Selectors give us a place to put logic for combining, filtering, transforming storing data
+
+they give us a place to put the logic for transforming data in the store into data our components can use
+
+example code and explanation 
+
+
+const mapStateToProps = state ->({
+    completedTodos: getCompletedTodos(state),
+    incompleteTodos: getIncompeteTodos(state),
+})
+
+we can have selectores called getCompletedTodos and getIncompeteTodos
+each contain to logic nessessary for filtering todos in the redux store into specific sub-lists
+Then we can use these Selectors in out mapStateToProps insteade of the logic itself there
+
+
+if you look at how this project stated off... in our ./todos/TodoList.js
+the mapSateToProps had isLoading: state.isloading and todos:state.todos
+
+//
+1.
+//
+
+creating selectors:
+
+lets create a file inside our todos folder selectors.js
+add the following
+export const getTodos = state => state.todos.data;
+export const getTodosLoading = state => state.todos.isLoading;
+
+import these in TodoList.js and NewtodoOForm.js
+and change our mapStateToProps functions to use these selectors
+    
+    //inside TodoList.js
+    isLoading: getTodosLoading(state),
+    todos: getTodos(state),
+
+    //inside NewtodoOForm.js
+        todos: getTodos(state),
+
+
+
+now our app will work the same, but now its using selectors insteade of refering to directly how data is stored in the state
+
+now lets look at how this allow us to modify the structor of our data in the redux store without disturbing our components whatso ever
+
+lets incorperate our isLoading reducer into our todos reducer
+this will make is more self expanitory sense we might have other resources like users that we needed to load from a server as well. 
+ this would require us to have another isLoading reducer for loading users or whatever other resources we needed to have a loading indicator for
+
+ so what will will do is include a single todos reducer which stores the current todos array in the redux store 
+ as well as wether or not the apps  is currently loading todos 
+inorder to make this happen we will 
+    store todos array in state.todos.data
+    store the loading state in state.todos.isLoading
+
+so we need to combind our isLoading and todos reducers 
+
+state.todos:{
+    isLoading: true,
+    data: [...]
+}
+look at out reducer.js
+we made a ton of changes and removed the isloading reducers
+we need to remove it from store.js as well
+
+
+A reminder.... these selectors helped our components be independent of the exact strucure of data in our redux store 
+
+
+//
+2.
+//
+Combining selectors with Reselect:
+
+lets say we are going to change our app by having to seperate lists..
+completed todosand ones that havent been done yet
+
+lets create some new selectors
+but first lets add a tool to help us out...
+when we need to create a selector that make use of other selectors like below we have getIncompleteTodos selector using getTodos selector
+we can use a tool called reselect that we can use to help build more complex logic ontop of simpler selectors, and combind slectors if needed
+
+npm i reselect
+
+export const getIncompleteTodos = createSelector(
+    getTodos,
+    (todos) => todos.filter(todo => !todo.isCompleted),
+);
+
+
+//
+3.
+//
+More about selectors:
+add another  selector...
+export const getCompletedTodos = createSelector(
+    getTodos,
+    (todos) => todos.filter(todo => todo.isCompleted),
+);
+
+
+
+we should not that these higher order selectors we defined have no idea how our data 
+is formated in the redux store...
+nowhere are we refering to state.todos.data or state.todos.isLoading....
+so even our higher order selectors rely on our lower level selectors to worry about the exact formate of our data in redux
+
+
+createSelectors use memoization.... 
+so... when we reload if will have saved state that can be looked up to avoid unessesary rerenders
+somethinf needs to change else it knows not to worrie about an update
+
+//
+4.
+//
+Adding selectors to components:
+in todosList... import our selectors
+update our mapStateToProps
