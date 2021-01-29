@@ -1,5 +1,6 @@
 import {
   createTodo,
+  removeTodo,
   loadTodosInProgress,
   loadTodosSuccess,
   loadTodosFailure,
@@ -51,6 +52,19 @@ export const addTodoRequest = (text) => async (dispatch) => {
     });
     const todo = await response.json();
     dispatch(createTodo(todo));
+  } catch (e) {
+    dispatch(displayAlert(e));
+  }
+};
+
+//server is giving us id's.
+export const removeTodoRequest = (id) => async (dispatch) => {
+  try {
+    const response = await fetch(`http://localhost:8080/todos/${id}`, {
+      method: "delete",
+    });
+    const removedTodo = await response.json();
+    dispatch(removeTodo(removedTodo)); //make sure you change the action creator and reducer for this to work... (actions.js)
   } catch (e) {
     dispatch(displayAlert(e));
   }

@@ -75,5 +75,73 @@ we will have the ability to add and load things to our server
 now we need to be able to delete stuff
 and a way to update server resources
 
+in thunks.js add the following
+
+export const removeTodoRequest = id => async dispatch => {
+    try {
+        const response = await fetch(`http://localhost:8080/todos/${id}`, {
+            method: 'delete'
+        });
+        const removedTodo = await response.json();
+        dispatch(removeTodo(removedTodo));
+    } catch (e) {
+        dispatch(displayAlert(e));
+    }
+}
+dont forget to import:  removeTodo,
+
+to get our dispatch to work we need to update actions.js, reducers.js, TodoList.js, and todolistItem.js
+
+//old code in actions.js
+export const REMOVE_TODO = "REMOVE_TODO";
+export const removeTodo = (text) => ({
+  type: REMOVE_TODO,
+  payload: { text },
+});
+
+//updated code in actions.js
+export const REMOVE_TODO = 'REMOVE_TODO';
+export const removeTodo = todo => ({
+    type: REMOVE_TODO,
+    payload: { todo },
+});
+
+//old code in reducers.js
+    case REMOVE_TODO: {
+      //look at actions.js
+      const { text } = payload;
+      return state.filter((todo) => todo.text !== text);
+    }
+
+//updated code in reducers.js
+case REMOVE_TODO: {
+    const { todo: todoToRemove } = payload;
+    return state.filter(todo => todo.id !== todoToRemove.id);
+}
 
 
+in TodoList.js make sure to updat teh imports
+import { loadTodos, removeTodoRequest } from './thunks';
+import { markTodoAsCompleted } from './actions'; //here we removed the removeTodo import from actions
+
+//old code in TodoList.js
+const mapDispatchToProps = (dispatch) => ({
+  startLoadingTodos: () => dispatch(loadTodos()),
+  onRemovePressed: (text) => dispatch(removeTodo(text)),
+  onCompletedPressed: (text) => dispatch(markTodoAsCompleted(text)),
+});
+
+//updated code in TodoList.js
+const mapDispatchToProps = dispatch => ({
+    startLoadingTodos: () => dispatch(loadTodos()),
+    onRemovePressed: id => dispatch(removeTodoRequest(id)),
+    onCompletedPressed: text => dispatch(markTodoAsCompleted(text)),
+});
+
+in TodoListItem.js
+update our button to have todo.id insteade of text 
+//old
+<button onClick={() => onRemovePressed(todo.text)} className="remove-button">Remove</button>
+
+//NewtodoOForm
+ <button onClick={() => onRemovePressed(todo.id)} className="remove-button">Remove</button>
